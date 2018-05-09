@@ -46,7 +46,8 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
         model_path = self.config['inference']['frozen_model_path']
-        self.light_classifier = TLClassifier(model_path=model_path, confidence_threshold=0.3)
+        confidence_threshold = self.config['inference']['confidence_threshold']
+        self.light_classifier = TLClassifier(model_path=model_path, confidence_threshold=confidence_threshold)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -92,6 +93,7 @@ class TLDetector(object):
         of times till we start using it. Otherwise the previous stable state is
         used.
         '''
+        #TODO(saajan): Temp, remove later
         # self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         if self.state != state:
             self.state_count = 0
@@ -135,7 +137,7 @@ class TLDetector(object):
         # use classifier (commented) below later
         #return light.state
 
-        #TODO: Check that the traffic light is in vicinity of pose to even be
+        #TODO: Maybe check that the traffic light is in vicinity of pose to even be
         # in the current frame
 
         if(not self.has_image):
@@ -156,6 +158,9 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+        # TODO(saajan): Temp, remove later
+        self.get_light_state(None, None)
+
         closest_light = None
         line_wp_idx = None
 
