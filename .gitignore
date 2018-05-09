@@ -6,4 +6,4 @@ devel
 profile.tmp
 
 # TL Detection Data
-ros/src/tl_detector/data/
+ros/src/tl_detector/data/saved_models
