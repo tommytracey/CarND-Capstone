@@ -159,7 +159,7 @@ class TLDetector(object):
 
         """
         # TODO(saajan): Temp, remove later
-        self.get_light_state(None, None)
+        # self.get_light_state(None, None)
 
         closest_light = None
         line_wp_idx = None
