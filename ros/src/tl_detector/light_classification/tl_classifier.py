@@ -9,7 +9,7 @@ import glob
 
 class TLClassifier(object):
     def __init__(self, model_path, confidence_threshold):
-        
+
         self.confidence_threshold = confidence_threshold
 
         self.graph = tf.Graph()
@@ -62,9 +62,9 @@ class TLClassifier(object):
             rospy.loginfo("[TL Detector] Classes: {0}".format(classes))
             rospy.loginfo("[TL Detector] Scores: {0}".format(scores))
 
-            
+
 #             ##############
-#             ## Strategy 1: pick the most frequent prediction (consider replacing 
+#             ## Strategy 1: pick the most frequent prediction (consider replacing
 #             # with weighted frequency)
 #             #
 #             #
@@ -76,7 +76,7 @@ class TLClassifier(object):
 #             if (len(class_predictions_above_threshold) == 0):
 #                 rospy.loginfo("[Detector] Predicted Class: Unknown")
 #                 return TrafficLight.UNKNOWN
-                
+
 #             class_predictions = Counter(class_predictions_above_threshold)
 #             most_frequent_class = class_predictions.most_common(1)[0][0]
 
@@ -92,12 +92,12 @@ class TLClassifier(object):
 #             #
 #             #
 #             ##############
-            
-            
+
+
             ##############
             ## Strategy 2: pick the first prediction above threshold
             for detected_class, score in zip(classes, scores):
-                if score > self.confidence_threshold:                    
+                if score > self.confidence_threshold:
                     if detected_class == 1:
                         rospy.loginfo("[Detector] Predicted Class: Red")
                         return TrafficLight.RED
@@ -107,11 +107,11 @@ class TLClassifier(object):
                     elif detected_class == 3:
                         rospy.loginfo("[Detector] Predicted Class: Green")
                         return TrafficLight.GREEN
-                    
+
             #
             #
             ##############
-            
 
-        rospy.loginfo("[Detector] Predicted Class: Unknown")
+
+        rospy.loginfo("[TL Detector] Predicted Class: Unknown")
         return TrafficLight.UNKNOWN

@@ -92,6 +92,7 @@ class TLDetector(object):
         of times till we start using it. Otherwise the previous stable state is
         used.
         '''
+        # self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         if self.state != state:
             self.state_count = 0
             self.state = state

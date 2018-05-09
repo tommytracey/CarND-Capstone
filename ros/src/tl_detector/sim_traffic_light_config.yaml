@@ -12,4 +12,4 @@ stop_line_positions:
     - [351.84, 1574.65]
 
 inference:
-  frozen_model_path: 'data/saved_models/model_sim/frozen_inference_graph'
+  frozen_model_path: 'data/saved_models/model_sim/frozen_inference_graph.pb'
