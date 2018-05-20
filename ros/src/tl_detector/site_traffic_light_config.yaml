@@ -7,5 +7,6 @@ stop_line_positions:
     - [8.0, 16.2]
 
 inference:
-  frozen_model_path: 'data/saved_models/model_real/frozen_inference_graph.pb'
-  confidence_threshold: 0.3
+  frozen_model_path: 'data/saved_models/vanilla_detector/ssd_mobilenet_v1_coco/frozen_inference_graph.pb'
+  confidence_threshold: 0.0
+  is_real: True

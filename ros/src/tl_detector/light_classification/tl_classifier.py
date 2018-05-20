@@ -2,14 +2,31 @@ from styx_msgs.msg import TrafficLight
 import rospy
 
 import tensorflow as tf
+import os
 import cv2
 import numpy as np
 from collections import Counter
 import glob
 
-class TLClassifier(object):
-    def __init__(self, model_path, confidence_threshold):
+# TODO(saajan): Remove this testing code
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
 
+
+
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+class TLClassifier(object):
+    def __init__(self, vanilla_model_path, confidence_threshold, is_real):
+
+        # TODO(saajan): Remove this testing code
+        self.cropped_boxes = rospy.Publisher('/cropped_boxes', Image, queue_size=1)
+        self.bridge = CvBridge()
+
+
+
+        self.is_real = is_real
         self.confidence_threshold = confidence_threshold
 
         self.graph = tf.Graph()
@@ -20,7 +37,9 @@ class TLClassifier(object):
         with self.graph.as_default():
             graph_def = tf.GraphDef()
 
-            with tf.gfile.GFile(model_path, 'rb') as graph_file:
+            rospy.loginfo("[TL Detector] Reading vanilla model: {0}".format(vanilla_model_path))
+
+            with tf.gfile.GFile(vanilla_model_path, 'rb') as graph_file:
                 read_graph_file = graph_file.read()
 
                 graph_def.ParseFromString(read_graph_file)
@@ -31,7 +50,7 @@ class TLClassifier(object):
             self.image_tensor = self.graph.get_tensor_by_name('image_tensor:0')
             self.num_detections =self.graph.get_tensor_by_name('num_detections:0')
             # For each detection, it's corresponding bounding box, class and score:
-            # self.boxes = self.graph.get_tensor_by_name('detection_boxes:0')
+            self.boxes = self.graph.get_tensor_by_name('detection_boxes:0')
             self.classes = self.graph.get_tensor_by_name('detection_classes:0')
             self.scores =self.graph.get_tensor_by_name('detection_scores:0')
 
@@ -46,72 +65,95 @@ class TLClassifier(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-
         cv2_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+        cropped_tls = self.get_boxes(cv2_image)
+
+        if not self.is_real:
+            # In the simulator, we should just check for the count of red pixels to detect red lights
+            for cropped_tl in cropped_tls:
+                # Detect number of red pixels
+                cropped_image_hsv = cv2.cvtColor(cropped_tl, cv2.COLOR_RGB2HSV)
+
+                # lower mask (0-10)
+                lower_red_1 = np.array([0, 50, 50], dtype='uint8')
+                upper_red_1 = np.array([10, 255, 255], dtype='uint8')
+
+                # upper mask (170-180)
+                lower_red_2 = np.array([170, 50, 50], dtype='uint8')
+                upper_red_2 = np.array([180, 255, 255], dtype='uint8')
+
+                red_mask_1 = cv2.inRange(cropped_image_hsv, lower_red_1, upper_red_1)
+                red_mask_2 = cv2.inRange(cropped_image_hsv, lower_red_2, upper_red_2)
+
+                combined_mask = cv2.bitwise_or(red_mask_1, red_mask_2)
+
+                red_pixels_count = cv2.countNonZero(combined_mask)
+
+                rospy.loginfo("[TL Detector] Simulator num red pixels: " + str(red_pixels_count))
+
+                if red_pixels_count > 30: # typical value is usually around 50
+                    return TrafficLight.RED
+                else:
+                    return TrafficLight.UNKNOWN
+
+
+    def get_boxes(self, image):
         with self.graph.as_default():
             cv2_image_expanded = np.expand_dims(image, axis=0)
 
-            (classes, scores) = self.sess.run(
-                [self.classes, self.scores],
+            (classes, scores, boxes) = self.sess.run(
+                [self.classes, self.scores, self.boxes,],
                 feed_dict={self.image_tensor: cv2_image_expanded})
             classes = np.squeeze(classes)
             scores = np.squeeze(scores)
+            boxes = np.squeeze(boxes)
 
-            rospy.loginfo("[TL Detector] Results:")
-            rospy.loginfo("[TL Detector] Classes: {0}".format(classes))
-            rospy.loginfo("[TL Detector] Scores: {0}".format(scores))
+            tl_boxes = []
+            for detected_class, score, box in zip(classes, scores, boxes):
+                # Get TL boxes which have been detected with high enough confidence
+                if score > self.confidence_threshold and detected_class == 10:
 
+                    # Check for anomalies in box
+                    box_in_pixels = self.normalized_box_to_pixels(box, image)
 
-#             ##############
-#             ## Strategy 1: pick the most frequent prediction (consider replacing
-#             # with weighted frequency)
-#             #
-#             #
-#             class_predictions_above_threshold = []
-#             for detected_class, score in zip(classes, scores):
-#                 if score > self.confidence_threshold:
-#                     class_predictions_above_threshold.append(detected_class)
+                    # Box too small, skip
+                    box_height = box_in_pixels[2] - box_in_pixels[0]
+                    box_width = box_in_pixels[3] - box_in_pixels[1]
+                    if(box_height < 15) or (box_width < 15):
+                        continue
 
-#             if (len(class_predictions_above_threshold) == 0):
-#                 rospy.loginfo("[Detector] Predicted Class: Unknown")
-#                 return TrafficLight.UNKNOWN
+                    # Box can't be a TL due to H:W ratio, skip
+                    if (box_height/box_width < 1.5):
+                        continue
 
-#             class_predictions = Counter(class_predictions_above_threshold)
-#             most_frequent_class = class_predictions.most_common(1)[0][0]
+                    tl_boxes.append(box_in_pixels)
 
-#             if most_frequent_class == 1:
-#                 rospy.loginfo("[Detector] Predicted Class: Red")
-#                 return TrafficLight.RED
-#             elif most_frequent_class == 2:
-#                 rospy.loginfo("[Detector] Predicted Class: Yellow")
-#                 return TrafficLight.YELLOW
-#             elif most_frequent_class == 3:
-#                 rospy.loginfo("[Detector] Predicted Class: Green")
-#                 return TrafficLight.GREEN
-#             #
-#             #
-#             ##############
+            # Extract cropped TLs using boxes
+            cropped_tls = []
+            #image_as_np_array = np.asarray(image, dtype="uint8")
+            #rospy.loginfo("[TL Detector] Image size: " +str(image.shape))
+            for detected_box in tl_boxes:
+                #ospy.loginfo("[TL Detector] Detected box: " +str(detected_box))
+                cropped_tls.append(
+                    cv2.resize(
+                        image[detected_box[0] : detected_box[2], detected_box[1] : detected_box[3]],
+                        (32, 32)))
 
-
-            ##############
-            ## Strategy 2: pick the first prediction above threshold
-            for detected_class, score in zip(classes, scores):
-                if score > self.confidence_threshold:
-                    if detected_class == 1:
-                        rospy.loginfo("[Detector] Predicted Class: Red")
-                        return TrafficLight.RED
-                    elif detected_class == 2:
-                        rospy.loginfo("[Detector] Predicted Class: Yellow")
-                        return TrafficLight.YELLOW
-                    elif detected_class == 3:
-                        rospy.loginfo("[Detector] Predicted Class: Green")
-                        return TrafficLight.GREEN
-
-            #
-            #
-            ##############
+            # TODO(saajan): Remove this testing code
+            for cropped_tl in cropped_tls:
+                try:
+                    self.cropped_boxes.publish(self.bridge.cv2_to_imgmsg(cropped_tl, "rgb8"))
+                except CvBridgeError as e:
+                    print(e)
 
 
-        rospy.loginfo("[TL Detector] Predicted Class: Unknown")
-        return TrafficLight.UNKNOWN
+
+            return cropped_tls
+
+
+    def normalized_box_to_pixels(self, box, image):
+        height, width = image.shape[0], image.shape[1]
+
+        return [int(height * box[0]), int(width * box[1]),
+                int(height * box[2]), int(width * box[3])]

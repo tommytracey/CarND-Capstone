@@ -12,5 +12,6 @@ stop_line_positions:
     - [351.84, 1574.65]
 
 inference:
-  frozen_model_path: 'data/saved_models/model_sim/frozen_inference_graph.pb'
-  confidence_threshold: 0.3
+  vanilla_model_path: 'data/saved_models/vanilla_detector/ssd_mobilenet_v1_coco/frozen_inference_graph.pb'
+  confidence_threshold: 0.5
+  is_real: False

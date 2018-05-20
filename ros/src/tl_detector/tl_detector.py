@@ -45,9 +45,12 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        model_path = self.config['inference']['frozen_model_path']
+        vanilla_model_path = self.config['inference']['vanilla_model_path']
         confidence_threshold = self.config['inference']['confidence_threshold']
-        self.light_classifier = TLClassifier(model_path=model_path, confidence_threshold=confidence_threshold)
+        is_real = self.config['inference']['is_real']
+        self.light_classifier = TLClassifier(
+            vanilla_model_path=vanilla_model_path,
+            confidence_threshold=confidence_threshold, is_real=is_real)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -95,6 +98,7 @@ class TLDetector(object):
         '''
         #TODO(saajan): Temp, remove later
         # self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+        #rospy.loginfo("Test:")
         if self.state != state:
             self.state_count = 0
             self.state = state
@@ -139,7 +143,6 @@ class TLDetector(object):
 
         #TODO: Maybe check that the traffic light is in vicinity of pose to even be
         # in the current frame
-
         if(not self.has_image):
             self.prev_light_loc = None
             return False
@@ -159,7 +162,7 @@ class TLDetector(object):
 
         """
         # TODO(saajan): Temp, remove later
-        # self.get_light_state(None, None)
+        self.get_light_state(None, None)
 
         closest_light = None
         line_wp_idx = None
