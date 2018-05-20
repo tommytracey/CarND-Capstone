@@ -15,3 +15,4 @@ inference:
   vanilla_model_path: 'data/saved_models/vanilla_detector/ssd_mobilenet_v1_coco/frozen_inference_graph.pb'
   confidence_threshold: 0.5
   is_real: False
+  skip_frames: 0

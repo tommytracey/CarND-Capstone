@@ -48,9 +48,10 @@ class TLDetector(object):
         vanilla_model_path = self.config['inference']['vanilla_model_path']
         confidence_threshold = self.config['inference']['confidence_threshold']
         is_real = self.config['inference']['is_real']
+        skip_frames = self.config['inference']['skip_frames']
         self.light_classifier = TLClassifier(
             vanilla_model_path=vanilla_model_path,
-            confidence_threshold=confidence_threshold, is_real=is_real)
+            confidence_threshold=confidence_threshold, is_real=is_real, skip_frames=skip_frames)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -161,8 +162,12 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        # TODO(saajan): Temp, remove later
-        self.get_light_state(None, None)
+        # TODO(saajan): Remove this testing code
+        # # Needed for testing with real track's bag file
+        # state = self.get_light_state(None, None)
+        # if state == TrafficLight.RED:
+        #     self.upcoming_red_light_pub.publish(Int32(12345))
+
 
         closest_light = None
         line_wp_idx = None
