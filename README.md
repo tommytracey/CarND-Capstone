@@ -18,6 +18,8 @@ To overcome this problem, we turn the camera off in simulator (effectively disab
 This should not be required on a machine with higher specs.
 
 
+-----------------------------------------------------------------------------------------------------------------------
+
 Please use **one** of the two installation options, either native **or** docker installation.
 
 ### Native Installation
