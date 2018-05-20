@@ -9,8 +9,8 @@ from collections import Counter
 import glob
 
 # TODO(saajan): Remove this testing code
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
+# from sensor_msgs.msg import Image
+# from cv_bridge import CvBridge
 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -19,8 +19,8 @@ class TLClassifier(object):
     def __init__(self, vanilla_model_path, confidence_threshold, is_real, skip_frames):
 
         # TODO(saajan): Remove this testing code
-        self.cropped_boxes = rospy.Publisher('/cropped_boxes', Image, queue_size=20)
-        self.bridge = CvBridge()
+        # self.cropped_boxes = rospy.Publisher('/cropped_boxes', Image, queue_size=20)
+        # self.bridge = CvBridge()
 
 
         self.is_real = is_real
@@ -67,8 +67,8 @@ class TLClassifier(object):
         if(self.frames_count <= self.skip_frames):
             self.frames_count += 1
 
-            #rospy.loginfo("[TL Detector] Skipping frame...")
-            return TrafficLight.UNKNOWN
+            rospy.loginfo("[TL Detector] Skipping detection for this frame...")
+            return TrafficLight.SKIP
         else:
             self.frames_count = 1 #reset
 
@@ -99,9 +99,10 @@ class TLClassifier(object):
 
                 red_pixels_count = cv2.countNonZero(combined_mask)
 
-                rospy.loginfo("[TL Detector] Simulator num red pixels: " + str(red_pixels_count))
+                #rospy.loginfo("[TL Detector] Simulator Red TL num pixels: " + str(red_pixels_count))
 
                 if red_pixels_count > 150: # typical value is usually around 200
+                    rospy.loginfo("[TL Detector] Detected RED light")
                     return TrafficLight.RED
                 else:
                     return TrafficLight.UNKNOWN
@@ -116,9 +117,10 @@ class TLClassifier(object):
 
                 v_channel = cropped_image_hsv[:, :, 2]
                 brightness = np.sum(v_channel)
-                rospy.loginfo("[TL Detector] Red TL brightness: " + str(brightness))
+                #rospy.loginfo("[TL Detector] Red TL brightness: " + str(brightness))
 
                 if int(brightness) > 250000: # typical value is usually around 255000
+                    rospy.loginfo("[TL Detector] Detected RED light")
                     return TrafficLight.RED
                 else:
                     return TrafficLight.UNKNOWN
@@ -174,11 +176,11 @@ class TLClassifier(object):
                         (32, 32)))
 
             # TODO(saajan): Remove this testing code
-            for cropped_tl in cropped_tls:
-                try:
-                    self.cropped_boxes.publish(self.bridge.cv2_to_imgmsg(cropped_tl, "rgb8"))
-                except CvBridgeError as e:
-                    print(e)
+            # for cropped_tl in cropped_tls:
+            #     try:
+            #         self.cropped_boxes.publish(self.bridge.cv2_to_imgmsg(cropped_tl, "rgb8"))
+            #     except CvBridgeError as e:
+            #         print(e)
 
 
 

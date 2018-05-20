@@ -13,7 +13,7 @@ import tf
 import cv2
 import yaml
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = -1#3 # Kill this protection - we have confidence on our detection
 
 
 class TLDetector(object):
@@ -47,11 +47,11 @@ class TLDetector(object):
         self.bridge = CvBridge()
         vanilla_model_path = self.config['inference']['vanilla_model_path']
         confidence_threshold = self.config['inference']['confidence_threshold']
-        is_real = self.config['inference']['is_real']
+        self.is_real = self.config['inference']['is_real']
         skip_frames = self.config['inference']['skip_frames']
         self.light_classifier = TLClassifier(
             vanilla_model_path=vanilla_model_path,
-            confidence_threshold=confidence_threshold, is_real=is_real, skip_frames=skip_frames)
+            confidence_threshold=confidence_threshold, is_real=self.is_real, skip_frames=skip_frames)
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -100,18 +100,23 @@ class TLDetector(object):
         #TODO(saajan): Temp, remove later
         # self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         #rospy.loginfo("Test:")
-        if self.state != state:
-            self.state_count = 0
-            self.state = state
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
-            self.last_wp = light_wp
+        # if self.state != state:
+        #     self.state_count = 0
+        #     self.state = state
+        # elif self.state_count >= STATE_COUNT_THRESHOLD:
+        #     self.last_state = self.state
+        #     light_wp = light_wp if state == TrafficLight.RED else -1
+        #     self.last_wp = light_wp
 
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
+        #     self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+        # else:
+        #     self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+        # self.state_count += 1
+
+        # Kill the above block - we don't need protection, we're confident about our detections
+        light_wp = light_wp if state == TrafficLight.RED else self.last_wp if state == TrafficLight.SKIP else -1
+        self.last_wp = light_wp
+        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -163,10 +168,10 @@ class TLDetector(object):
 
         """
         # TODO(saajan): Remove this testing code
-        # # Needed for testing with real track's bag file
-        # state = self.get_light_state(None, None)
-        # if state == TrafficLight.RED:
-        #     self.upcoming_red_light_pub.publish(Int32(12345))
+        # Needed for testing with real track's bag file
+        state = self.get_light_state(None, None)
+        if state == TrafficLight.RED:
+            self.upcoming_red_light_pub.publish(Int32(12345))
 
 
         closest_light = None
