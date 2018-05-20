@@ -10,6 +10,14 @@ Team Members:
 
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
+### Important notes
+The VM that we tested on was limited on resources. As a result, a lag is observed when all the ROS components are running simultaneously and the lag worsens progressively.
+
+To overcome this problem, we turn the camera off in simulator (effectively disabling the Traffic Light detection component) unless a Traffic Light is on the horizon.
+
+This should not be required on a machine with higher specs.
+
+
 Please use **one** of the two installation options, either native **or** docker installation.
 
 ### Native Installation
