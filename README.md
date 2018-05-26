@@ -3,10 +3,8 @@
 # Capstone Project: System Integration
 
 
-<figure>
-  <img src="writeup/carla.png" width="100%" alt="Carla">
-  <figcaption><font size="2"><center>Udacity's self-driving car, named "Carla."</center></font></figcaption>
-</figure>
+<img src="writeup/carla.png" width="100%" alt="Carla"></img>
+
 
 ### Team Information
 
