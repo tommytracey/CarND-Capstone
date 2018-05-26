@@ -1,15 +1,14 @@
-#### Udacity Self-Driving Car Engineer Nanodegree
-### Term 3 / Project 13
+### Udacity Self-Driving Car Engineer Nanodegree
+#### Term 3 &nbsp;|&nbsp; Project 13
 # Capstone Project: System Integration
-
 
 <img src="writeup/carla.png" width="100%" alt="Carla"></img>
 
+#### &nbsp;
 
 ### Team Information
 
 Team Name: Delos Mobile
-
 
 Team Members:
 * [Justin Michela	| jmichela3@gmail.com](https://www.linkedin.com/in/justinmichela)
@@ -22,6 +21,8 @@ Team Lead: Justin Michela
 #### &nbsp;
 
 ---
+
+#### &nbsp;
 
 ## Overview
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree in which we program a real self-driving car.
@@ -43,7 +44,9 @@ There are three primary subsystems which need to be built and integrated in this
 
 <img src="writeup/systems-int-3.png" width="75%" /></a>
 
-As you can see, within each of the three subsystems, there are various components. These components are already quite familiar to us since we've built each of them throughout the prior 12 projects of the program. But we've yet to build an integrated system and test it on an actual car. So, for this final project we need to build and integrate a subset of these components. At a high-level, we need to:
+As you can see, within each of the three subsystems, there are various components. These components are already quite familiar to us since we've built each of them throughout the prior 12 projects of the program. But we've yet to build an integrated system and test it on an actual car. So, for this final project we need to build and integrate a subset of these components.
+
+At a high-level, we need to:
 
 1. Get the car to drive safely and smoothly around the track.
 1. Localize the car's position on the track.
@@ -53,7 +56,7 @@ As you can see, within each of the three subsystems, there are various component
 1. Get the car to stop smoothly at red lights.
 1. Get the car to smoothly resume driving when the light turns green.
 
-First, we are required to get the system running in a simulator. Then, once approved, our code will be tested by Udacity in Carla, the self-driving car pictured above.   
+First, we are required to get everything working in the simulator. Then, once approved, our code will be tested by Udacity in "Carla," the self-driving car pictured above.   
 
 
 #### &nbsp;
@@ -78,7 +81,7 @@ Here is a high-level breakdown of our approach.
 
 <img src="writeup/ros-architecture.png" width="75%" /></a>
 
-Udacity has provided a ROS framework for us to build and connect the nodes pictured above. This framework allows us to run our code in the driving simulator as well as Carla, the actual self-driving car.
+Udacity has provided a ROS framework for us to build and connect the nodes pictured above. This framework allows us to run our code in the simulator as well as the actual self-driving car.
 
 
 
