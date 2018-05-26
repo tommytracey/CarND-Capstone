@@ -42,7 +42,7 @@ There are three primary subsystems which need to be built and integrated in this
 1. **Control** &mdash; Actuates the vehicles' steering, throttle, and brake commands to execute the desired driving path and target velocity.
 
 
-<img src="writeup/systems-int-3.png" width="75%" /></a>
+<img src="writeup/systems-int-3.png" width="100%" /></a>
 
 As you can see, within each of the three subsystems, there are various components. These components are already quite familiar to us since we've built each of them throughout the prior 12 projects of the program. But we've yet to build an integrated system and test it on an actual car. So, for this final project we need to build and integrate a subset of these components.
 
@@ -79,7 +79,7 @@ Here is a high-level breakdown of our approach.
 - Implement a `drive_by_wire` ROS node. That takes target trajectory information as input and sends control commands to navigate the vehicle.
 
 
-<img src="writeup/ros-architecture.png" width="75%" /></a>
+<img src="writeup/ros-architecture.png" width="100%" /></a>
 
 Udacity has provided a ROS framework for us to build and connect the nodes pictured above. This framework allows us to run our code in the simulator as well as the actual self-driving car.
 
