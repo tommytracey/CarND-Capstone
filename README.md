@@ -1,24 +1,123 @@
+#### Udacity Self-Driving Car Engineer Nanodegree
+### Term 3 / Project 13
+# Capstone Project: System Integration
+
+
+<figure>
+  <img src="writeup/carla.png" width="100%" alt="Carla">
+  <figcaption><font size="2"><center>Udacity's self-driving car, named "Carla."</center></font></figcaption>
+</figure>
+
 ### Team Information
 
 Team Name: Delos Mobile
-Team Lead: Justin Michela	jmichela3@gmail.com
+
+
 Team Members:
-* Justin Michela	jmichela3@gmail.com
-* Daniel Han	daniel88han@gmail.com
-* Thomas Tracey	tommytracey@gmail.com
-* Saajan Shridhar	saajan.is@gmail.com
+* [Justin Michela	| jmichela3@gmail.com](https://www.linkedin.com/in/justinmichela)
+* [Daniel Han |	daniel88han@gmail.com](https://github.com/bigdan88)
+* [Thomas Tracey |  tommytracey@gmail.com](https://www.linkedin.com/in/thomastracey)
+* [Saajan Shridhar |	saajan.is@gmail.com](https://www.linkedin.com/in/saajan/)
 
-This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
+Team Lead: Justin Michela
 
-### Important notes
+#### &nbsp;
+
+---
+
+## Overview
+This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree in which we program a real self-driving car.
+
+The **goal** of the project is to get Udacity's self-driving car to drive around a test track while avoiding obstacles and stopping at traffic lights.
+
+[Here is a brief video](https://youtu.be/UT34zkxfS_M) from Udacity that explains the project in more detail.
+
+
+#### &nbsp;
+## Scope
+
+There are three primary subsystems which need to be built and integrated in this project:
+
+1. **Perception** &mdash; Takes in sensor data to localize the vehicle and detect various aspects of the driving environment (e.g., road lanes, traffic lights, etc.)
+1. **Planning** &mdash; Determines the optimal path and target velocity to ensure a safe and smooth driving experience. Then updates the vehicle waypoints accordingly.
+1. **Control** &mdash; Actuates the vehicles' steering, throttle, and brake commands to execute the desired driving path and target velocity.
+
+
+<img src="writeup/systems-int-3.png" width="75%" /></a>
+
+As you can see, within each of the three subsystems, there are various components. These components are already quite familiar to us since we've built each of them throughout the prior 12 projects of the program. But we've yet to build an integrated system and test it on an actual car. So, for this final project we need to build and integrate a subset of these components. At a high-level, we need to:
+
+1. Get the car to drive safely and smoothly around the track.
+1. Localize the car's position on the track.
+1. Keep the car driving in the middle lane.
+1. Use camera sensor data to detect traffic lights.
+1. Classify whether the traffic light is green, yellow, or red.
+1. Get the car to stop smoothly at red lights.
+1. Get the car to smoothly resume driving when the light turns green.
+
+First, we are required to get the system running in a simulator. Then, once approved, our code will be tested by Udacity in Carla, the self-driving car pictured above.   
+
+
+#### &nbsp;
+## Approach
+
+Here is a high-level breakdown of our approach.
+
+
+### Perception
+
+- Implement traffic light detection and classification using a convolutional neural network.
+
+
+### Planning
+
+- Implement a ROS node called the `waypoint_updater`. This node sets the target velocity for each waypoint based on any upcoming traffic lights or obstacles. For example, whenever the car needs to stop at a red light, this node will set decelerating velocities for the series of waypoints between the car and the traffic light.
+
+### Control
+
+- Implement a `drive_by_wire` ROS node. That takes target trajectory information as input and sends control commands to navigate the vehicle.
+
+
+<img src="writeup/ros-architecture.png" width="75%" /></a>
+
+Udacity has provided a ROS framework for us to build and connect the nodes pictured above. This framework allows us to run our code in the driving simulator as well as Carla, the actual self-driving car.
+
+
+
+#### &nbsp;
+## Implementation & Testing
+Here we outline in more detail the steps we took to build each of the various subsystems.
+
+- _coming soon_
+
+
+#### &nbsp;
+## Results
+
+- _coming soon_
+
+
+#### &nbsp;
+## Areas for Improvement
+
+- _coming soon_
+
+
+#### &nbsp;
+#### &nbsp;
+
+---
+# Running the Project
+
+#### Important notes
 The VM that we tested on was limited on resources. As a result, a lag is observed when all the ROS components are running simultaneously and the lag worsens progressively.
 
 To overcome this problem, we turn the camera off in simulator (effectively disabling the Traffic Light detection component) unless a Traffic Light is on the horizon.
 
 This should not be required on a machine with higher specs.
 
-
------------------------------------------------------------------------------------------------------------------------
+#### &nbsp;
+## Starter Code
 
 Please use **one** of the two installation options, either native **or** docker installation.
 
