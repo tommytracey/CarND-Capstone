@@ -1,6 +1,6 @@
 ### Udacity Self-Driving Car Engineer Nanodegree
 #### Term 3 &nbsp;|&nbsp; Project 13
-# Capstone Project: System Integration
+# Capstone Project: Programming a Real Self-Driving Car
 
 <img src="writeup/carla.png" width="100%" alt="Carla"></img>
 
