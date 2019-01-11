@@ -84,29 +84,12 @@ Here is a high-level breakdown of our approach.
 Udacity has provided a ROS framework for us to build and connect the nodes pictured above. This framework allows us to run our code in the simulator as well as the actual self-driving car.
 
 
-
-#### &nbsp;
-## Implementation & Testing
-Here we outline in more detail the steps we took to build each of the various subsystems.
-
-- _coming soon_
-
-
 #### &nbsp;
 ## Results
 
 [Here](https://youtu.be/JB4OJLPHx9U) is a video of our project running on a real self-driving car.
 
 <a href="https://youtu.be/JB4OJLPHx9U"><img src="imgs/carla-video-thumbnail.png" width="55%" /></a>
-
-
-
-
-#### &nbsp;
-## Areas for Improvement
-
-- _coming soon_
-
 
 #### &nbsp;
 #### &nbsp;
